@@ -102,8 +102,10 @@ extension LocationsViewController: UITableViewDataSource {
 extension LocationsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let city = self.locations[indexPath.row].split(separator: " ").joined(separator: "%20")
-        self.delegate?.didSelect(city: city)
+        var selectedCity = self.locations[indexPath.row]
+        ServerManager.shared.lastSearchedCity = selectedCity
+        selectedCity = selectedCity.split(separator: " ").joined(separator: "%20")
+        self.delegate?.didSelect(city: selectedCity)
         self.dismiss(animated: true, completion: nil)
     }
 }

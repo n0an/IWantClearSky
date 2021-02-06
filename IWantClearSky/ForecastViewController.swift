@@ -15,12 +15,20 @@ class ForecastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ServerManager.shared.getForecastForLastWeatherLocation { forecastItems in
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        ServerManager.shared.getForecastForLastSearched { forecastItems in
             self.forecastItems = forecastItems
             self.tableView.reloadData()
         }
     }
 }
+
+
 
 extension ForecastViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

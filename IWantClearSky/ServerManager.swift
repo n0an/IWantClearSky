@@ -16,12 +16,12 @@ class ServerManager {
     let apiKey = "294c2bdc1cec983192f139eaf975b49a"
     
     var lastWeatherLocation: CLLocation?
+    var lastSearchedCity: String?
     
     public static let shared = ServerManager()
     private init() {}
     
     public func getCurrentWeatherFor(locationName: String,
-                                     short: Bool = false,
                                      completion: @escaping (CurrentWeather) -> Void) {
         let currentWeatherUrl = "\(self.baseUrl)/weather?q=\(locationName)&appid=\(self.apiKey)&units=metric"
         let urlRequest = URLRequest(url: URL(string: currentWeatherUrl)!)
@@ -108,6 +108,16 @@ class ServerManager {
         }.resume()
     }
     
+    public func getForecastForLastSearched(completion: @escaping ([ForecastItem]) -> Void) {
+        if let lastSearchedCity = self.lastSearchedCity {
+            self.getForecastFor(city: lastSearchedCity, completion: completion)
+        } else if let location = self.lastWeatherLocation {
+            self.getForecastFor(lat: location.coordinate.latitude,
+                                lon: location.coordinate.longitude,
+                                completion: completion)
+        }
+    }
+    
     public func getForecastForLastWeatherLocation(completion: @escaping ([ForecastItem]) -> Void) {
         if let location = self.lastWeatherLocation {
             self.getForecastFor(lat: location.coordinate.latitude,
@@ -121,6 +131,40 @@ class ServerManager {
         self.getForecastFor(lat: location.coordinate.latitude,
                             lon: location.coordinate.longitude,
                             completion: completion)
+    }
+    
+    public func getForecastFor(city: String,
+                               completion: @escaping ([ForecastItem]) -> Void) {
+        
+        
+        let forecastUrlString = "\(self.baseUrl)/forecast/daily?q=\(city)&appid=\(self.apiKey)&units=metric"
+        let urlRequest = URLRequest(url: URL(string: forecastUrlString)!)
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                guard let data = data,
+                      let json = try? JSON(data: data),
+                      let jsonForecastItemsList = json["list"].array else { return }
+                
+                var forecastItems = [ForecastItem]()
+                
+                for jsonForecastItem in jsonForecastItemsList {
+                    let weatherDict = jsonForecastItem["weather"].array?.first?.dictionary
+                    let forecastItem = ForecastItem(weatherDescription: weatherDict?["description"]?.string,
+                                                    maxTemp: jsonForecastItem["temp"]["max"].doubleValue,
+                                                    minTemp: jsonForecastItem["temp"]["min"].doubleValue,
+                                                    date: Date(timeIntervalSince1970: jsonForecastItem["dt"].doubleValue),
+                                                    iconId: weatherDict?["icon"]?.string)
+                    
+                    forecastItems.append(forecastItem)
+                }
+                completion(forecastItems)
+            }
+        }.resume()
     }
     
     public func getForecastFor(lat: Double, lon: Double,
