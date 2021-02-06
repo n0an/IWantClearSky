@@ -20,6 +20,56 @@ class ServerManager {
     public static let shared = ServerManager()
     private init() {}
     
+    public func getCurrentWeatherFor(locationName: String,
+                                     short: Bool = false,
+                                     completion: @escaping (CurrentWeather) -> Void) {
+        let currentWeatherUrl = "\(self.baseUrl)/weather?q=\(locationName)&appid=\(self.apiKey)&units=metric"
+        let urlRequest = URLRequest(url: URL(string: currentWeatherUrl)!)
+        self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
+    }
+    
+    private func getCurrentWeartherWithURLRequest(_ urlRequest: URLRequest,
+                                                  short: Bool = false,
+                                                  completion: @escaping (CurrentWeather) -> Void) {
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                guard let data = data,
+                      let json = try? JSON(data: data) else { return }
+                
+                let responseCode = json["cod"].intValue
+                
+                if responseCode == 404 {
+                    print("city not found")
+                    return
+                }
+                
+                let weatherDict = json["weather"].array?.first?.dictionaryValue
+                
+                let date = json["dt"].doubleValue
+                
+                let sunrise = json["sys"]["sunrise"].doubleValue
+                let sunset = json["sys"]["sunset"].doubleValue
+                
+                let isNight = sunrise > date || date > sunset
+                
+                let currentWeather = CurrentWeather(cityName: json["name"].string,
+                                                    currentTemp: json["main"]["temp"].doubleValue,
+                                                    description: weatherDict?["description"]?.string,
+                                                    iconId: weatherDict?["icon"]?.string,
+                                                    code: (weatherDict?["id"]!.intValue)!,
+                                                    isNight: isNight)
+                print(currentWeather)
+                completion(currentWeather)
+            }
+            
+        }.resume()
+    }
+    
     public func getCurrentWeatherFor(location: CLLocation,
                                      completion: @escaping (CurrentWeather) -> Void) {
         self.lastWeatherLocation = location
