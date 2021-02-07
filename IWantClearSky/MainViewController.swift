@@ -41,12 +41,20 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 //        GeoLocationManager.shared.delegate = self
         
+        
         self.bgImageView = UIImageView()
         self.view.insertSubview(self.bgImageView, at: 0)
         
+        self.getCurrentWeatherFromCache()
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.requestLocation()
+        }
+    }
+    
+    func getCurrentWeatherFromCache() {        
+        if let cachedCurrentWeather = CurrentWeather.loadFromCache() {
+            self.updateUIWithCurrentWeather(cachedCurrentWeather)
         }
     }
     

@@ -15,20 +15,29 @@ class ForecastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        self.getForecastItemsFromCache()
         
         ServerManager.shared.getForecastForLastSearched { forecastItems in
             self.forecastItems = forecastItems
             self.tableView.reloadData()
         }
     }
+    
+    func getForecastItemsFromCache() {
+        guard let data = UserDefaults.standard.object(forKey: savedForecast) as? Data else {
+            return
+        }
+        if let forecastItems = try? JSONDecoder().decode([ForecastItem].self, from: data) {
+            self.forecastItems = forecastItems
+            self.tableView.reloadData()
+        }
+    }
 }
-
-
 
 extension ForecastViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

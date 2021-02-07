@@ -8,3 +8,5 @@
 import Foundation
 
 public let savedFavoriteLocationsArray = "savedFavoriteLocationsArray"
+public let savedCurrentWeather = "savedCurrentWeather"
+public let savedForecast = "savedForecast"

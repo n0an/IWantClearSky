@@ -57,12 +57,18 @@ class ServerManager {
                 
                 let isNight = sunrise > date || date > sunset
                 
+                
                 let currentWeather = CurrentWeather(cityName: json["name"].string,
                                                     currentTemp: json["main"]["temp"].doubleValue,
                                                     description: weatherDict?["description"]?.string,
                                                     iconId: weatherDict?["icon"]?.string,
                                                     code: (weatherDict?["id"]!.intValue)!,
                                                     isNight: isNight)
+                
+                currentWeather.saveToCache()
+                
+//                UserDefaults.standard.setValue(currentWeather.toDict, forKey: savedCurrentWeather)
+
                 print(currentWeather)
                 completion(currentWeather)
             }
@@ -95,12 +101,19 @@ class ServerManager {
                 
                 let isNight = sunrise > date || date > sunset
                 
+                
+                
                 let currentWeather = CurrentWeather(cityName: json["name"].string,
                                                     currentTemp: json["main"]["temp"].doubleValue,
                                                     description: weatherDict?["description"]?.string,
                                                     iconId: weatherDict?["icon"]?.string,
                                                     code: (weatherDict?["id"]!.intValue)!,
                                                     isNight: isNight)
+                
+                
+                currentWeather.saveToCache()
+                
+                
                 print(currentWeather)
                 completion(currentWeather)
             }
@@ -196,10 +209,35 @@ class ServerManager {
                     
                     forecastItems.append(forecastItem)
                 }
+                
+                do {
+                    let data = try JSONEncoder().encode(forecastItems)
+                    UserDefaults.standard.set(data, forKey: savedForecast)
+                } catch {
+                    print(error)
+                }
+                
+                
                 completion(forecastItems)
             }
         }.resume()
     }
+    
+//    public static func loadFromCache() -> ForecastItem? {
+//        guard let data = UserDefaults.standard.object(forKey: savedForecast) as? Data else {
+//            return nil
+//        }
+//        return try? JSONDecoder().decode(ForecastItem.self, from: data)
+//    }
+//
+//    func saveToCache() {
+//        do {
+//            let data = try JSONEncoder().encode(self)
+//            UserDefaults.standard.set(data, forKey: savedForecast)
+//        } catch {
+//            print(error)
+//        }
+//    }
     
     public func fetchWeatherIconFor(iconId: String, completion: @escaping (Data) -> Void) {
         if let data = try? Data(contentsOf: self.getDocumentsDirectory().appendingPathComponent(iconId)) {

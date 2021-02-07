@@ -15,7 +15,7 @@ struct ForecastItem: WeatherItem {
     var iconId: String?
 }
 
-protocol WeatherItem {
+protocol WeatherItem: Codable {
     func prepareTemperatureStr(temp: Double) -> String
 }
 
