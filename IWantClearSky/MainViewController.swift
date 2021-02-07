@@ -89,7 +89,6 @@ class MainViewController: UIViewController {
     }
     
     func getCurrentWeatherFor(city: String) {
-        ServerManager.shared.lastSearchedCity = city
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             self?.updateUIWithCurrentWeather(currentWeather)
         }
