@@ -17,6 +17,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var hintLabel: UILabel!
     @IBOutlet weak var currentWeatherImageView: UIImageView!
     @IBOutlet weak var locationsButton: UIButton!
+    @IBOutlet weak var currentLocationButton: UIButton!
     
     // MARK: - PROPERTIES
     var currentLocation: CLLocation!
@@ -27,7 +28,7 @@ class MainViewController: UIViewController {
     lazy var locationManager: CLLocationManager = {
         let lm = CLLocationManager()
         lm.delegate = self
-        lm.desiredAccuracy = kCLLocationAccuracyKilometer
+        lm.desiredAccuracy = kCLLocationAccuracyHundredMeters
         lm.requestWhenInUseAuthorization()
         return lm
     }()
@@ -83,6 +84,10 @@ class MainViewController: UIViewController {
         self.present(navVc, animated: true, completion: nil)
     }
     
+    @IBAction func actionCurrentLocationTapped(_ sender: Any) {
+        self.locationManager.requestLocation()
+    }
+    
     func getCurrentWeatherFor(city: String) {
         ServerManager.shared.lastSearchedCity = city
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
@@ -105,7 +110,8 @@ class MainViewController: UIViewController {
          self.weatherDescriptionLabel,
          self.hintLabel].forEach {$0?.textColor = labelsColor}
         
-        self.locationsButton.tintColor = currentWeather.isNight ? .white : .black
+        [self.locationsButton,
+         self.currentLocationButton].forEach {$0?.tintColor = currentWeather.isNight ? .white : .black}
         
         var hint = ""
         if currentWeather.currentTemp < 0 {
@@ -164,6 +170,12 @@ extension MainViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let ac = UIAlertController(title: "Location Services Error", message: "Please, to get actual weather for current location, allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        ac.addAction(okAction)
+        self.present(ac, animated: true, completion: nil)
+        
         print(error.localizedDescription)
     }
     

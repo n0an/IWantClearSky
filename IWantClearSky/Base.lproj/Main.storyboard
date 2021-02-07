@@ -60,6 +60,14 @@
                                     <action selector="actionLocationsButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Bi2-hI-ySf"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CUs-8t-PAA">
+                                <rect key="frame" x="20" y="773" width="20" height="20"/>
+                                <color key="tintColor" systemColor="labelColor"/>
+                                <state key="normal" image="location.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="actionCurrentLocationTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="um0-A7-qhL"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -71,12 +79,15 @@
                             <constraint firstItem="9R0-p7-Aav" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="IX9-3a-OCD"/>
                             <constraint firstItem="9R0-p7-Aav" firstAttribute="top" secondItem="im4-3X-XB3" secondAttribute="bottom" constant="63" id="WRU-lE-Vun"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="hEl-L9-c6m" secondAttribute="bottom" constant="20" id="aQo-0c-Q1u"/>
+                            <constraint firstItem="CUs-8t-PAA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="duv-6W-stD"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="CUs-8t-PAA" secondAttribute="bottom" constant="20" id="fAV-LR-PcA"/>
                             <constraint firstItem="uQn-4f-IM0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="i2V-0b-o9c"/>
                             <constraint firstItem="im4-3X-XB3" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="uNc-Qx-PLz"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Current" image="thermometer.sun" catalog="system" id="Lnt-3V-L9s"/>
                     <connections>
+                        <outlet property="currentLocationButton" destination="CUs-8t-PAA" id="wBo-uR-mx8"/>
                         <outlet property="currentWeatherImageView" destination="im4-3X-XB3" id="fxY-zg-22K"/>
                         <outlet property="hintLabel" destination="7fi-g6-xeB" id="OlX-rt-fKU"/>
                         <outlet property="locationLabel" destination="uQn-4f-IM0" id="PzJ-T5-d17"/>
@@ -89,7 +100,7 @@
             </objects>
             <point key="canvasLocation" x="989.85507246376824" y="-165.40178571428569"/>
         </scene>
-        <!--Locations View Controller-->
+        <!--Favorites-->
         <scene sceneID="o9t-hJ-Hii">
             <objects>
                 <viewController storyboardIdentifier="LocationsViewController" id="U7X-YC-ukW" customClass="LocationsViewController" customModule="IWantClearSky" customModuleProvider="target" sceneMemberID="viewController">
@@ -167,7 +178,7 @@
                             <constraint firstItem="CYY-WI-snN" firstAttribute="bottom" secondItem="Rd2-bu-FCc" secondAttribute="bottom" constant="20" id="zTo-ej-csz"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="i3G-sN-iAH">
+                    <navigationItem key="navigationItem" title="Favorites" id="i3G-sN-iAH">
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="SU0-SU-lVj">
                             <connections>
                                 <action selector="actionDoneBarButtonTapped:" destination="U7X-YC-ukW" id="4Yk-c8-fFF"/>
@@ -338,6 +349,7 @@
     <resources>
         <image name="calendar" catalog="system" width="128" height="106"/>
         <image name="list.dash" catalog="system" width="128" height="85"/>
+        <image name="location.fill" catalog="system" width="128" height="121"/>
         <image name="magnifyingglass.circle.fill" catalog="system" width="128" height="121"/>
         <image name="thermometer.sun" catalog="system" width="114" height="128"/>
         <systemColor name="labelColor">
