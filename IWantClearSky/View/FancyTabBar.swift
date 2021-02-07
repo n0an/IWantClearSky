@@ -54,13 +54,7 @@ class FancyTabBar: UITabBar {
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         if let tabBarController = keyWindow?.rootViewController as? UITabBarController,
            let mainVc = tabBarController.viewControllers?.first as? MainViewController {
-            mainVc.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
-                mainVc.getCurrentWeatherFor(city: city)
-                if var citiesArray = LocationsViewController.loadCitiesFromCache() {
-                    citiesArray.append(city)
-                    LocationsViewController.saveCitiesToCache(cities: citiesArray)
-                }
-            }
+            mainVc.presentSearchAndGetCurrentWeather()
         }
     }
 }

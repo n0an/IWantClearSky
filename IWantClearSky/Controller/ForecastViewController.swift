@@ -8,10 +8,13 @@
 import UIKit
 
 class ForecastViewController: UIViewController {
+    // MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
     
-    var forecastItems = [ForecastItem]()
+    // MARK: - PROPERTIES
+    private var forecastItems = [ForecastItem]()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.allowsSelection = false
@@ -23,8 +26,6 @@ class ForecastViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.forecastItems = []
-        self.tableView.reloadData()
         self.getForecastItemsFromCache()
         self.getForecastItemsFromServer()
     }
@@ -33,21 +34,17 @@ class ForecastViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func currentWeatherUpdated() {
+    // MARK: - PRIVATE
+    @objc private func currentWeatherUpdated() {
         self.getForecastItemsFromServer()
     }
     
-    func getForecastItemsFromCache() {
-        guard let data = UserDefaults.standard.object(forKey: savedForecast) as? Data else {
-            return
-        }
-        if let forecastItems = try? JSONDecoder().decode([ForecastItem].self, from: data) {
-            self.forecastItems = forecastItems
-            self.tableView.reloadData()
-        }
+    private func getForecastItemsFromCache() {
+        self.forecastItems = ForecastItem.loadForecastFromCache()
+        self.tableView.reloadData()
     }
     
-    func getForecastItemsFromServer() {
+    private func getForecastItemsFromServer() {
         ServerManager.shared.getForecastForLastSearched { [weak self] forecastItems in
             DispatchQueue.main.async {
                 self?.forecastItems = forecastItems
@@ -57,6 +54,7 @@ class ForecastViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension ForecastViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.forecastItems.count

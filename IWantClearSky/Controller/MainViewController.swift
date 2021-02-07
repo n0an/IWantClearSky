@@ -9,7 +9,6 @@ import UIKit
 import CoreLocation
 
 class MainViewController: UIViewController {
-    
     // MARK: - OUTLETS
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -20,11 +19,10 @@ class MainViewController: UIViewController {
     @IBOutlet weak var currentLocationButton: UIButton!
     
     // MARK: - PROPERTIES
-    var bgImageView: UIImageView!
+    private var bgImageView: UIImageView!
+    private var forcedStatusBarStyle: UIStatusBarStyle = .default
     
-    var forcedStatusBarStyle: UIStatusBarStyle = .default
-    
-    lazy var locationManager: CLLocationManager = {
+    private lazy var locationManager: CLLocationManager = {
         let lm = CLLocationManager()
         lm.delegate = self
         lm.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -49,12 +47,6 @@ class MainViewController: UIViewController {
         }
     }
     
-    func getCurrentWeatherFromCache() {
-        if let cachedCurrentWeather = CurrentWeather.loadFromCache() {
-            self.updateUIWithCurrentWeather(cachedCurrentWeather)
-        }
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.bgImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,35 +56,33 @@ class MainViewController: UIViewController {
          self.bgImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)].forEach {$0.isActive = true}
     }
     
-    @IBAction func actionLocationsButtonTapped(_ sender: Any) {
-        let listVc = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "LocationsViewController") as! LocationsViewController
-        listVc.delegate = self
-        let navVc = UINavigationController(rootViewController: listVc)
-        navVc.modalPresentationStyle = .fullScreen
-        self.present(navVc, animated: true, completion: nil)
-    }
-    
-    @IBAction func actionCurrentLocationTapped(_ sender: Any) {
-        self.locationManager.requestLocation()
-    }
-    
-    func getCurrentWeatherFor(city: String) {
-        ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
-            DispatchQueue.main.async {
-                self?.updateUIWithCurrentWeather(currentWeather)
-//
-//
-//
-//                if let cityName = currentWeather.cityName {
-//                    NotificationCenter.default.post(name: NSNotification.Name(notificationCurrentWeatherDidLoad),
-//                                                    object: nil,
-//                                                    userInfo: ["cityName": cityName])
-//                }
+    // MARK: - PUBLIC
+    public func presentSearchAndGetCurrentWeather() {
+        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
+            self.getCurrentWeatherFor(city: city)
+            if var citiesArray = LocationsViewController.loadCitiesFromCache() {
+                citiesArray.append(city)
+                LocationsViewController.saveCitiesToCache(cities: citiesArray)
             }
         }
     }
     
-    func updateUIWithCurrentWeather(_ currentWeather: CurrentWeather) {
+    // MARK: - PRIVATE
+    private func getCurrentWeatherFromCache() {
+        if let cachedCurrentWeather = CurrentWeather.loadFromCache() {
+            self.updateUIWithCurrentWeather(cachedCurrentWeather)
+        }
+    }
+    
+    private func getCurrentWeatherFor(city: String) {
+        ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
+            DispatchQueue.main.async {
+                self?.updateUIWithCurrentWeather(currentWeather)
+            }
+        }
+    }
+    
+    private func updateUIWithCurrentWeather(_ currentWeather: CurrentWeather) {
         self.locationLabel.text = currentWeather.cityName ?? "--"
         if let currentTemp = currentWeather.currentTemp {
             self.temperatureLabel.text = currentWeather.getTemperatureStr(temp: currentTemp)
@@ -144,28 +134,8 @@ class MainViewController: UIViewController {
             self.currentWeatherImageView.image = UIImage(named: iconImageName)
         }
     }
-}
-
-extension MainViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
-            DispatchQueue.main.async {
-                self?.updateUIWithCurrentWeather(currentWeather)
-            }
-        }
-    }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        let ac = UIAlertController(title: "Location Services Error", message: "Please, to get actual weather for current location, allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        ac.addAction(okAction)
-        self.present(ac, animated: true, completion: nil)
-        print(error.localizedDescription)
-    }
-    
-    func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
+    private func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
         let ac = UIAlertController(title: title, message: message, preferredStyle: style)
         ac.addTextField { tf in
             let cities = ["Moscow",
@@ -190,11 +160,45 @@ extension MainViewController: CLLocationManagerDelegate {
         ac.addAction(cancel)
         present(ac, animated: true, completion: nil)
     }
+    
+    // MARK: - ACTIONS
+    @IBAction func actionLocationsButtonTapped(_ sender: Any) {
+        let listVc = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "LocationsViewController") as! LocationsViewController
+        listVc.delegate = self
+        let navVc = UINavigationController(rootViewController: listVc)
+        navVc.modalPresentationStyle = .fullScreen
+        self.present(navVc, animated: true, completion: nil)
+    }
+    
+    @IBAction func actionCurrentLocationTapped(_ sender: Any) {
+        self.locationManager.requestLocation()
+    }
 }
 
+// MARK: - CLLocationManagerDelegate
+extension MainViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
+            DispatchQueue.main.async {
+                self?.updateUIWithCurrentWeather(currentWeather)
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let ac = UIAlertController(title: "Location Services Error", message: "Please, to get actual weather for current location, allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        ac.addAction(okAction)
+        self.present(ac, animated: true, completion: nil)
+        print(error.localizedDescription)
+    }
+}
+
+// MARK: - LocationsViewControllerDelegate
 extension MainViewController: LocationsViewControllerDelegate {
     func didSelect(city: String) {
         self.getCurrentWeatherFor(city: city)
-        
     }
 }

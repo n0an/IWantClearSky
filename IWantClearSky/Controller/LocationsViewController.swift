@@ -13,18 +13,7 @@ protocol LocationsViewControllerDelegate: AnyObject  {
 }
 
 class LocationsViewController: UIViewController {
-    // MARK: - OUTLETS
-    @IBOutlet weak var tableView: UITableView!
-    
-    // MARK: - PROPERTIES
-    var locations = [String]()
-    weak var delegate: LocationsViewControllerDelegate?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.loadCitiesFromCache()
-    }
-    
+    // MARK: - STATIC METHODS
     public static func loadCitiesFromCache() -> [String]? {
         if let locationsArray = UserDefaults.standard.stringArray(forKey: savedFavoriteLocationsArray) {
             return locationsArray
@@ -36,6 +25,20 @@ class LocationsViewController: UIViewController {
         UserDefaults.standard.setValue(cities, forKey: savedFavoriteLocationsArray)
     }
     
+    // MARK: - OUTLETS
+    @IBOutlet weak var tableView: UITableView!
+    
+    // MARK: - PROPERTIES
+    private var locations = [String]()
+    public weak var delegate: LocationsViewControllerDelegate?
+    
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.loadCitiesFromCache()
+    }
+    
+    // MARK: - PRIVATE
     private func loadCitiesFromCache() {
         if let locationsArray = Self.loadCitiesFromCache() {
             self.locations = locationsArray
@@ -47,14 +50,7 @@ class LocationsViewController: UIViewController {
         Self.saveCitiesToCache(cities: self.locations)
     }
     
-    
-    @IBAction func actionSearchButtonTapped(_ sender: Any) {
-        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in
-            self?.getWeatherForEnteredCity(city)
-        }
-    }
-    
-    func getWeatherForEnteredCity(_ city: String) {
+    private func getWeatherForEnteredCity(_ city: String) {
         let city = city.split(separator: " ").joined(separator: "%20")
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             DispatchQueue.main.async {
@@ -65,8 +61,7 @@ class LocationsViewController: UIViewController {
         }
     }
     
-    
-    func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
+    private func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
         let ac = UIAlertController(title: title, message: message, preferredStyle: style)
         ac.addTextField { tf in
             let cities = ["Moscow",
@@ -90,13 +85,19 @@ class LocationsViewController: UIViewController {
     }
     
     
+    // MARK: - ACTIONS
+    @IBAction func actionSearchButtonTapped(_ sender: Any) {
+        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in
+            self?.getWeatherForEnteredCity(city)
+        }
+    }
+    
     @IBAction func actionDoneBarButtonTapped(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-
 }
 
+// MARK: - UITableViewDataSource
 extension LocationsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.locations.count
@@ -109,6 +110,7 @@ extension LocationsViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension LocationsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -126,4 +128,3 @@ extension LocationsViewController: UITableViewDelegate {
         self.tableView.endUpdates()
     }
 }
-
