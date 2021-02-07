@@ -29,9 +29,9 @@ class ForecastCell: UITableViewCell {
             self.dayLabel.text = dayStr
         }
         if let iconId = forecastItem.iconId {
-            ServerManager.shared.fetchWeatherIconFor(iconId: iconId) { data in
+            ServerManager.shared.fetchWeatherIconFor(iconId: iconId) { [weak self] data in
                 DispatchQueue.main.async {                
-                    self.weatherImageView.image = UIImage(data: data)
+                    self?.weatherImageView.image = UIImage(data: data)
                 }
             }
         }

@@ -7,15 +7,17 @@
 
 import UIKit
 
+// MARK: - LocationsViewControllerDelegate
 protocol LocationsViewControllerDelegate: AnyObject  {
     func didSelect(city: String)
 }
 
 class LocationsViewController: UIViewController {
+    // MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
     
+    // MARK: - PROPERTIES
     var locations = [String]()
-    
     weak var delegate: LocationsViewControllerDelegate?
     
     override func viewDidLoad() {

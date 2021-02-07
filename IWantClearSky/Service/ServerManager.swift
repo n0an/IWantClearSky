@@ -113,12 +113,12 @@ class ServerManager {
     private func getCurrentWeartherWithURLRequest(_ urlRequest: URLRequest,
                                                   needNotify: Bool = true,
                                                   completion: @escaping (CurrentWeather) -> Void) {
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
             }
-            self.parseCurrentWeatherJSONData(data,
+            self?.parseCurrentWeatherJSONData(data,
                                              needNotify: needNotify,
                                              completion: completion)
         }.resume()
@@ -165,12 +165,12 @@ class ServerManager {
     
     private func getForecastWithURLRequest(_ urlRequest: URLRequest,
                                            completion: @escaping ([ForecastItem]) -> Void) {
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
             }
-            self.parseForecastJSONData(data, completion: completion)
+            self?.parseForecastJSONData(data, completion: completion)
         }.resume()
     }
     
