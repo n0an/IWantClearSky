@@ -10,12 +10,12 @@ import UIKit
 class FancyTabBar: UITabBar {
     
     private var middleButton = UIButton()
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         setupMiddleButton()
     }
-
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if self.isHidden {
             return super.hitTest(point, with: event)
@@ -23,7 +23,7 @@ class FancyTabBar: UITabBar {
         
         let from = point
         let to = middleButton.center
-
+        
         return sqrt((from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)) <= 39 ? middleButton : super.hitTest(point, with: event)
     }
     
@@ -31,7 +31,7 @@ class FancyTabBar: UITabBar {
         super.layoutSubviews()
         middleButton.center = CGPoint(x: UIScreen.main.bounds.width / 2, y: 0)
     }
-
+    
     func setupMiddleButton() {
         middleButton.setImage(UIImage(named: "plus"), for: .normal)
         middleButton.tintColor = .white
@@ -52,17 +52,10 @@ class FancyTabBar: UITabBar {
     
     @objc func showCitySearchAlert() {
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-        
-        let tabBarController = keyWindow?.rootViewController as! UITabBarController
-        let mainVc = tabBarController.viewControllers?.first as! MainViewController
-        
-        mainVc.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
-            print(city)
-            mainVc.getCurrentWeatherFor(city: city)
-            
-            if tabBarController.selectedIndex == 1 {
-                let forecastVc = tabBarController.viewControllers?[1] as! ForecastViewController
-                forecastVc.getForecastItemsFromServer()
+        if let tabBarController = keyWindow?.rootViewController as? UITabBarController,
+           let mainVc = tabBarController.viewControllers?.first as? MainViewController {
+            mainVc.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
+                mainVc.getCurrentWeatherFor(city: city)
             }
         }
     }
