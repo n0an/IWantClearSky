@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A6D6DAB25D006ED0093E8E2 /* FancyTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6D6DAA25D006ED0093E8E2 /* FancyTabBar.swift */; };
 		3A8A612D25CDD87A005B89CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A612C25CDD87A005B89CA /* AppDelegate.swift */; };
 		3A8A612F25CDD87A005B89CA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A612E25CDD87A005B89CA /* SceneDelegate.swift */; };
 		3A8A613125CDD87A005B89CA /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A613025CDD87A005B89CA /* MainViewController.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A6D6DAA25D006ED0093E8E2 /* FancyTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTabBar.swift; sourceTree = "<group>"; };
 		3A8A612925CDD87A005B89CA /* IWantClearSky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IWantClearSky.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A8A612C25CDD87A005B89CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3A8A612E25CDD87A005B89CA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 				3A8A614025CEAFA8005B89CA /* ServerManager.swift */,
 				3A8A614225CEB184005B89CA /* CurrentWeather.swift */,
 				3A8A614B25CED522005B89CA /* ForecastItem.swift */,
+				3A6D6DAA25D006ED0093E8E2 /* FancyTabBar.swift */,
 				3A8A613225CDD87A005B89CA /* Main.storyboard */,
 				3A8A613525CDD87B005B89CA /* Assets.xcassets */,
 				3A8A613725CDD87B005B89CA /* LaunchScreen.storyboard */,
@@ -180,6 +183,7 @@
 				3A8A614E25CEDCB7005B89CA /* ForecastCell.swift in Sources */,
 				3A8A615225CF1AE0005B89CA /* LocationCell.swift in Sources */,
 				3A8A614825CEBC02005B89CA /* LocationManager.swift in Sources */,
+				3A6D6DAB25D006ED0093E8E2 /* FancyTabBar.swift in Sources */,
 				3A8A613125CDD87A005B89CA /* MainViewController.swift in Sources */,
 				3A8A612D25CDD87A005B89CA /* AppDelegate.swift in Sources */,
 				3A8A612F25CDD87A005B89CA /* SceneDelegate.swift in Sources */,

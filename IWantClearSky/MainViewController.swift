@@ -52,7 +52,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    func getCurrentWeatherFromCache() {        
+    func getCurrentWeatherFromCache() {
         if let cachedCurrentWeather = CurrentWeather.loadFromCache() {
             self.updateUIWithCurrentWeather(cachedCurrentWeather)
         }
@@ -84,6 +84,7 @@ class MainViewController: UIViewController {
     }
     
     func getCurrentWeatherFor(city: String) {
+        ServerManager.shared.lastSearchedCity = city
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             self?.updateUIWithCurrentWeather(currentWeather)
         }

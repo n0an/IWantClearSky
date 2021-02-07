@@ -19,13 +19,8 @@ class ForecastViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         self.getForecastItemsFromCache()
-        
-        ServerManager.shared.getForecastForLastSearched { forecastItems in
-            self.forecastItems = forecastItems
-            self.tableView.reloadData()
-        }
+        self.getForecastItemsFromServer()
     }
     
     func getForecastItemsFromCache() {
@@ -33,6 +28,13 @@ class ForecastViewController: UIViewController {
             return
         }
         if let forecastItems = try? JSONDecoder().decode([ForecastItem].self, from: data) {
+            self.forecastItems = forecastItems
+            self.tableView.reloadData()
+        }
+    }
+    
+    func getForecastItemsFromServer() {
+        ServerManager.shared.getForecastForLastSearched { forecastItems in
             self.forecastItems = forecastItems
             self.tableView.reloadData()
         }
