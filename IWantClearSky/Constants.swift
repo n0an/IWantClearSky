@@ -11,3 +11,6 @@ import Foundation
 public let savedFavoriteLocationsArray = "savedFavoriteLocationsArray"
 public let savedCurrentWeather = "savedCurrentWeather"
 public let savedForecast = "savedForecast"
+
+// MARK: - Notifications Ids
+public let notificationCurrentWeatherDidLoad = "notificationCurrentWeatherDidLoad"

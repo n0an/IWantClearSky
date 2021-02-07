@@ -15,6 +15,10 @@ class ForecastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.allowsSelection = false
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(self.currentWeatherUpdated),
+                                               name: NSNotification.Name(notificationCurrentWeatherDidLoad),
+                                               object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -22,6 +26,14 @@ class ForecastViewController: UIViewController {
         self.forecastItems = []
         self.tableView.reloadData()
         self.getForecastItemsFromCache()
+        self.getForecastItemsFromServer()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func currentWeatherUpdated() {
         self.getForecastItemsFromServer()
     }
     

@@ -80,6 +80,14 @@ class MainViewController: UIViewController {
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             DispatchQueue.main.async {
                 self?.updateUIWithCurrentWeather(currentWeather)
+//
+//
+//
+//                if let cityName = currentWeather.cityName {
+//                    NotificationCenter.default.post(name: NSNotification.Name(notificationCurrentWeatherDidLoad),
+//                                                    object: nil,
+//                                                    userInfo: ["cityName": cityName])
+//                }
             }
         }
     }

@@ -14,10 +14,12 @@ class LocationCell: UITableViewCell {
     public func configureCell(with locationName: String) {
         self.locationNameLabel.text = locationName.capitalized
         let city = locationName.split(separator: " ").joined(separator: "%20")
-        ServerManager.shared.getCurrentWeatherFor(locationName: city) { currentWeather in
+        
+        ServerManager.shared.getCurrentWeatherFor(locationName: city,
+                                                  needNotify: false) { [weak self] currentWeather in
             DispatchQueue.main.async {
                 if let currentTemp = currentWeather.currentTemp {
-                    self.tempLabel.text = currentWeather.getTemperatureStr(temp: currentTemp)
+                    self?.tempLabel.text = currentWeather.getTemperatureStr(temp: currentTemp)
                 }
             }
         }

@@ -31,6 +31,7 @@ class ServerManager {
     // MARK: - PUBLIC
     // MARK: - Current Weather methods
     public func getCurrentWeatherFor(location: CLLocation,
+                                     needNotify: Bool = true,
                                      completion: @escaping (CurrentWeather) -> Void) {
         self.lastSearchedWeatherLocation = location
         self.lastSearchType = .byCoords
@@ -39,10 +40,13 @@ class ServerManager {
         currentWeatherUrlString += "lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
         
         let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
-        self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
+        self.getCurrentWeartherWithURLRequest(urlRequest,
+                                              needNotify: needNotify,
+                                              completion: completion)
     }
     
     public func getCurrentWeatherFor(locationName: String,
+                                     needNotify: Bool = true,
                                      completion: @escaping (CurrentWeather) -> Void) {
         self.lastSearchedCity = locationName
         self.lastSearchType = .byCityName
@@ -52,7 +56,9 @@ class ServerManager {
         currentWeatherUrlString += "q=\(locationName)&appid=\(self.apiKey)&units=metric"
         
         let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
-        self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
+        self.getCurrentWeartherWithURLRequest(urlRequest,
+                                              needNotify: needNotify,
+                                              completion: completion)
     }
     
     // MARK: - Forecast Methods
@@ -105,17 +111,21 @@ class ServerManager {
     
     // MARK: - PRIVATE
     private func getCurrentWeartherWithURLRequest(_ urlRequest: URLRequest,
+                                                  needNotify: Bool = true,
                                                   completion: @escaping (CurrentWeather) -> Void) {
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
             }
-            self.parseCurrentWeatherJSONData(data, completion: completion)
+            self.parseCurrentWeatherJSONData(data,
+                                             needNotify: needNotify,
+                                             completion: completion)
         }.resume()
     }
     
     private func parseCurrentWeatherJSONData(_ data: Data?,
+                                             needNotify: Bool = true,
                                              completion: @escaping (CurrentWeather) -> Void) {
         guard let data = data,
               let json = try? JSON(data: data) else { return }
@@ -146,6 +156,10 @@ class ServerManager {
         
         currentWeather.saveToCache()
         ForecastItem.invalidateForecastCache()
+        if needNotify {
+            NotificationCenter.default.post(name: NSNotification.Name(notificationCurrentWeatherDidLoad),
+                                            object: nil)
+        }
         completion(currentWeather)
     }
     
