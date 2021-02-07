@@ -69,6 +69,35 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		3A6D6DAF25D03E530093E8E2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				3A8A615125CF1AE0005B89CA /* LocationCell.swift */,
+				3A8A614D25CEDCB7005B89CA /* ForecastCell.swift */,
+				3A6D6DAA25D006ED0093E8E2 /* FancyTabBar.swift */,
+				3A8A613225CDD87A005B89CA /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		3A6D6DB025D03E830093E8E2 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3A8A613025CDD87A005B89CA /* MainViewController.swift */,
+				3A8A614F25CF17CF005B89CA /* LocationsViewController.swift */,
+				3A8A614925CED270005B89CA /* ForecastViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		3A6D6DB125D03E930093E8E2 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				3A8A614025CEAFA8005B89CA /* ServerManager.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		3A8A612025CDD87A005B89CA = {
 			isa = PBXGroup;
 			children = (
@@ -90,16 +119,11 @@
 			children = (
 				3A8A612C25CDD87A005B89CA /* AppDelegate.swift */,
 				3A8A612E25CDD87A005B89CA /* SceneDelegate.swift */,
-				3A8A613025CDD87A005B89CA /* MainViewController.swift */,
-				3A8A614F25CF17CF005B89CA /* LocationsViewController.swift */,
 				3A8A615525CF2D6F005B89CA /* Constants.swift */,
-				3A8A615125CF1AE0005B89CA /* LocationCell.swift */,
-				3A8A614925CED270005B89CA /* ForecastViewController.swift */,
-				3A8A614D25CEDCB7005B89CA /* ForecastCell.swift */,
-				3A8A614025CEAFA8005B89CA /* ServerManager.swift */,
 				3A6D6DAC25D03A870093E8E2 /* Model */,
-				3A6D6DAA25D006ED0093E8E2 /* FancyTabBar.swift */,
-				3A8A613225CDD87A005B89CA /* Main.storyboard */,
+				3A6D6DAF25D03E530093E8E2 /* View */,
+				3A6D6DB025D03E830093E8E2 /* Controller */,
+				3A6D6DB125D03E930093E8E2 /* Service */,
 				3A8A613525CDD87B005B89CA /* Assets.xcassets */,
 				3A8A613725CDD87B005B89CA /* LaunchScreen.storyboard */,
 				3A8A613A25CDD87B005B89CA /* Info.plist */,
