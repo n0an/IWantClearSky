@@ -108,4 +108,13 @@ extension LocationsViewController: UITableViewDelegate {
         self.delegate?.didSelect(city: selectedCity)
         self.dismiss(animated: true, completion: nil)
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        self.locations.remove(at: indexPath.row)
+        self.saveCities()
+        self.tableView.beginUpdates()
+        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        self.tableView.endUpdates()
+    }
 }
+
