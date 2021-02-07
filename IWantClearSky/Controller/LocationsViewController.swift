@@ -12,7 +12,6 @@ protocol LocationsViewControllerDelegate: AnyObject  {
 }
 
 class LocationsViewController: UIViewController {
-    
     @IBOutlet weak var tableView: UITableView!
     
     var locations = [String]()
@@ -21,18 +20,29 @@ class LocationsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadCities()
+        self.loadCitiesFromCache()
     }
     
-    func loadCities() {
-        if let loadedArray = UserDefaults.standard.stringArray(forKey: savedFavoriteLocationsArray) {
-            self.locations = loadedArray
+    public static func loadCitiesFromCache() -> [String]? {
+        if let locationsArray = UserDefaults.standard.stringArray(forKey: savedFavoriteLocationsArray) {
+            return locationsArray
+        }
+        return nil
+    }
+    
+    public static func saveCitiesToCache(cities: [String]) {
+        UserDefaults.standard.setValue(cities, forKey: savedFavoriteLocationsArray)
+    }
+    
+    private func loadCitiesFromCache() {
+        if let locationsArray = Self.loadCitiesFromCache() {
+            self.locations = locationsArray
             self.tableView.reloadData()
         }
     }
     
-    func saveCities() {
-        UserDefaults.standard.setValue(self.locations, forKey: savedFavoriteLocationsArray)
+    private func saveCitiesToCache() {
+        Self.saveCitiesToCache(cities: self.locations)
     }
     
     
@@ -47,7 +57,7 @@ class LocationsViewController: UIViewController {
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             DispatchQueue.main.async {
                 self?.locations.append(currentWeather.cityName ?? city)
-                self?.saveCities()
+                self?.saveCitiesToCache()
                 self?.tableView.reloadData()
             }
         }
@@ -69,10 +79,6 @@ class LocationsViewController: UIViewController {
             let textField = ac.textFields?.first
             guard let cityName = textField?.text else { return }
             completion(cityName)
-//            if cityName != "" {
-//                let city = cityName.split(separator: " ").joined(separator: "%20")
-//                completion(city)
-//            }
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
@@ -112,7 +118,7 @@ extension LocationsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         self.locations.remove(at: indexPath.row)
-        self.saveCities()
+        self.saveCitiesToCache()
         self.tableView.beginUpdates()
         self.tableView.deleteRows(at: [indexPath], with: .automatic)
         self.tableView.endUpdates()
