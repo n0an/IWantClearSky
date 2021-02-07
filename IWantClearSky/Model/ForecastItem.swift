@@ -34,4 +34,8 @@ struct ForecastItem: WeatherItem {
             print(error)
         }
     }
+    
+    public static func invalidateForecastCache() {
+        UserDefaults.standard.removeObject(forKey: savedForecast)
+    }
 }

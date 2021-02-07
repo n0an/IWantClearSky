@@ -117,12 +117,9 @@ class ServerManager {
     
     private func parseCurrentWeatherJSONData(_ data: Data?,
                                              completion: @escaping (CurrentWeather) -> Void) {
-        
         guard let data = data,
               let json = try? JSON(data: data) else { return }
-        
         let responseCode = json["cod"].intValue
-        
         if responseCode == 404 {
             print("city not found")
             return
@@ -148,8 +145,8 @@ class ServerManager {
                                             isNight: isNight)
         
         currentWeather.saveToCache()
+        ForecastItem.invalidateForecastCache()
         completion(currentWeather)
-        
     }
     
     private func getForecastWithURLRequest(_ urlRequest: URLRequest,
