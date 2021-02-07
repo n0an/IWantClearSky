@@ -8,12 +8,14 @@
 import Foundation
 
 struct ForecastItem: WeatherItem {
+    // MARK: - PROPERTIES
     let weatherDescription: String?
-    let maxTemp: Double
-    let minTemp: Double
-    let date: Date
+    let maxTemp: Double?
+    let minTemp: Double?
+    let date: Date?
     let iconId: String?
     
+    // MARK: - CACHE
     public static func loadForecastFromCache() -> [Self] {
         guard let data = UserDefaults.standard.object(forKey: savedForecast) as? Data else {
             return []
@@ -31,20 +33,5 @@ struct ForecastItem: WeatherItem {
         } catch {
             print(error)
         }
-    }
-}
-
-protocol WeatherItem: Codable {
-    func prepareTemperatureStr(temp: Double) -> String
-}
-
-extension WeatherItem {
-    func prepareTemperatureStr(temp: Double) -> String {
-        let temp = Int(temp)
-        var tempStr = "\(temp)º"
-        if temp > 0 {
-            tempStr = "+\(tempStr)"
-        }
-        return tempStr
     }
 }

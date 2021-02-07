@@ -8,13 +8,15 @@
 import Foundation
 
 struct CurrentWeather: WeatherItem {
+    // MARK: - PROPERTIES
     let cityName: String?
-    let currentTemp: Double
+    let currentTemp: Double?
     let description: String?
     let iconId: String?
-    let code: Int
+    let code: Int?
     let isNight: Bool
     
+    // MARK: - CACHE
     public static func loadFromCache() -> CurrentWeather? {
         guard let data = UserDefaults.standard.object(forKey: savedCurrentWeather) as? Data else {
             return nil

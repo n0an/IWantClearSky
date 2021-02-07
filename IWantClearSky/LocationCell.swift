@@ -14,7 +14,9 @@ class LocationCell: UITableViewCell {
         self.locationNameLabel.text = locationName.capitalized
         let city = locationName.split(separator: " ").joined(separator: "%20")
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { currentWeather in
-            self.tempLabel.text = currentWeather.prepareTemperatureStr(temp: currentWeather.currentTemp)
+            if let currentTemp = currentWeather.currentTemp {
+                self.tempLabel.text = currentWeather.getTemperatureStr(temp: currentTemp)
+            }
         }
     }
 }

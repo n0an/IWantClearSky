@@ -20,7 +20,6 @@ class MainViewController: UIViewController {
     @IBOutlet weak var currentLocationButton: UIButton!
     
     // MARK: - PROPERTIES
-    var currentLocation: CLLocation!
     var bgImageView: UIImageView!
     
     var forcedStatusBarStyle: UIStatusBarStyle = .default
@@ -40,9 +39,6 @@ class MainViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-//        GeoLocationManager.shared.delegate = self
-        
-        
         self.bgImageView = UIImageView()
         self.view.insertSubview(self.bgImageView, at: 0)
         
@@ -61,8 +57,6 @@ class MainViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        GeoLocationManager.shared.getLocation()
-        
         self.bgImageView.translatesAutoresizingMaskIntoConstraints = false
         [self.bgImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
          self.bgImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
@@ -70,13 +64,7 @@ class MainViewController: UIViewController {
          self.bgImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)].forEach {$0.isActive = true}
     }
     
-    
     @IBAction func actionLocationsButtonTapped(_ sender: Any) {
-//        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in
-//            self?.getCurrentWeatherFor(city: city)
-//        }
-        
-        
         let listVc = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "LocationsViewController") as! LocationsViewController
         listVc.delegate = self
         let navVc = UINavigationController(rootViewController: listVc)
@@ -96,7 +84,19 @@ class MainViewController: UIViewController {
     
     func updateUIWithCurrentWeather(_ currentWeather: CurrentWeather) {
         self.locationLabel.text = currentWeather.cityName ?? "--"
-        self.temperatureLabel.text = currentWeather.prepareTemperatureStr(temp: currentWeather.currentTemp)
+        if let currentTemp = currentWeather.currentTemp {
+            self.temperatureLabel.text = currentWeather.getTemperatureStr(temp: currentTemp)
+            var hint = ""
+            if currentTemp < 0 {
+                hint = "It's frosty outside. Wear more clothes"
+            } else if 0...15 ~= currentTemp  {
+                hint = "It's quite cold"
+            } else {
+                hint = "Pretty warm outside"
+            }
+            self.hintLabel.text = hint
+        }
+        
         self.weatherDescriptionLabel.text = currentWeather.description?.capitalized
         
         let labelsColor = currentWeather.isNight ? UIColor.white : .black
@@ -112,60 +112,36 @@ class MainViewController: UIViewController {
         [self.locationsButton,
          self.currentLocationButton].forEach {$0?.tintColor = currentWeather.isNight ? .white : .black}
         
-        var hint = ""
-        if currentWeather.currentTemp < 0 {
-            hint = "It's frosty outside. Wear more clothes"
-        } else if 0...15 ~= currentWeather.currentTemp  {
-            hint = "It's quite cold"
-        } else {
-            hint = "Pretty warm outside"
+        if let weatherCode = currentWeather.code {
+            var conditionStr = "clear"
+            switch weatherCode {
+            case 800:
+                conditionStr = "clear"
+            case 500...531:
+                conditionStr = "rain"
+            case 600...632:
+                conditionStr = "snow"
+            case 801...804:
+                conditionStr = "partly_cloudy"
+            default:
+                break
+            }
+            
+            let dayOrNightStr = currentWeather.isNight ? "night" : "day"
+            let bgImageName = "bg_\(conditionStr)_\(dayOrNightStr)"
+            self.bgImageView.image = UIImage(named: bgImageName)
+            let iconImageName = "weather_condition_\(conditionStr)_\(dayOrNightStr)"
+            self.currentWeatherImageView.image = UIImage(named: iconImageName)
         }
-        self.hintLabel.text = hint
-        
-        var conditionStr = "clear"
-        
-        switch currentWeather.code {
-        case 800:
-            conditionStr = "clear"
-        case 500...531:
-            conditionStr = "rain"
-        case 600...632:
-            conditionStr = "snow"
-        case 801...804:
-            conditionStr = "partly_cloudy"
-        default:
-            break
-        }
-        
-        let dayOrNightStr = currentWeather.isNight ? "night" : "day"
-        
-        let bgImageName = "bg_\(conditionStr)_\(dayOrNightStr)"
-        
-        self.bgImageView.image = UIImage(named: bgImageName)
-        
-        let iconImageName = "weather_condition_\(conditionStr)_\(dayOrNightStr)"
-        
-        self.currentWeatherImageView.image = UIImage(named: iconImageName)
     }
 }
-
 
 extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-//        let latitude = location.coordinate.latitude
-//        let longitude = location.coordinate.longitude
-//
-        self.currentLocation = location
-//        55,755786
-//        37,617633
         ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
-            
             self?.updateUIWithCurrentWeather(currentWeather)
-            
         }
-        
-//        networkWeatherManager.fetchCurrentWeather(forRequestType: .coordinate(latitude: latitude, longitude: longitude))
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -174,7 +150,6 @@ extension MainViewController: CLLocationManagerDelegate {
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         ac.addAction(okAction)
         self.present(ac, animated: true, completion: nil)
-        
         print(error.localizedDescription)
     }
     

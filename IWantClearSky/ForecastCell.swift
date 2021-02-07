@@ -16,28 +16,22 @@ class ForecastCell: UITableViewCell {
     
     public func configureCell(with forecastItem: ForecastItem) {
         self.weatherDescriptionLabel.text = forecastItem.weatherDescription
-        
-        self.maxTempLabel.text = forecastItem.prepareTemperatureStr(temp: forecastItem.maxTemp)
-        self.minTempLabel.text = forecastItem.prepareTemperatureStr(temp: forecastItem.minTemp)
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        let dayStr = dateFormatter.string(from: forecastItem.date)
-        self.dayLabel.text = dayStr
-        
+        if let maxTemp = forecastItem.maxTemp {
+            self.maxTempLabel.text = forecastItem.getTemperatureStr(temp: maxTemp)
+        }
+        if let minTemp = forecastItem.minTemp {
+            self.minTempLabel.text = forecastItem.getTemperatureStr(temp: minTemp)
+        }
+        if let date = forecastItem.date {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "EEEE"
+            let dayStr = dateFormatter.string(from: date)
+            self.dayLabel.text = dayStr
+        }
         if let iconId = forecastItem.iconId {
             ServerManager.shared.fetchWeatherIconFor(iconId: iconId) { data in
                 self.weatherImageView.image = UIImage(data: data)
             }
         }
-        
-        
-        
-//        http://openweathermap.org/img/wn/10d@2x.png
-    }
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
     }
 }
