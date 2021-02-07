@@ -128,18 +128,23 @@ class ServerManager {
             return
         }
         
-        let weatherDict = json["weather"].array?.first?.dictionaryValue
-        let date = json["dt"].doubleValue
-        let sunrise = json["sys"]["sunrise"].doubleValue
-        let sunset = json["sys"]["sunset"].doubleValue
+        let weatherDict = json["weather"].array?.first?.dictionary
+        let date = json["dt"].double
+        let sunrise = json["sys"]["sunrise"].double
+        let sunset = json["sys"]["sunset"].double
         
-        let isNight = sunrise > date || date > sunset
+        var isNight = false
+        if let sunrise = sunrise,
+           let sunset = sunset,
+           let date = date {
+            isNight = sunrise > date || date > sunset
+        }
         
         let currentWeather = CurrentWeather(cityName: json["name"].string,
-                                            currentTemp: json["main"]["temp"].doubleValue,
+                                            currentTemp: json["main"]["temp"].double,
                                             description: weatherDict?["description"]?.string,
                                             iconId: weatherDict?["icon"]?.string,
-                                            code: (weatherDict?["id"]!.intValue)!,
+                                            code: weatherDict?["id"]?.intValue,
                                             isNight: isNight)
         
         currentWeather.saveToCache()
@@ -168,8 +173,8 @@ class ServerManager {
         for jsonForecastItem in jsonForecastItemsList {
             let weatherDict = jsonForecastItem["weather"].array?.first?.dictionary
             let forecastItem = ForecastItem(weatherDescription: weatherDict?["description"]?.string,
-                                            maxTemp: jsonForecastItem["temp"]["max"].doubleValue,
-                                            minTemp: jsonForecastItem["temp"]["min"].doubleValue,
+                                            maxTemp: jsonForecastItem["temp"]["max"].double,
+                                            minTemp: jsonForecastItem["temp"]["min"].double,
                                             date: Date(timeIntervalSince1970: jsonForecastItem["dt"].doubleValue),
                                             iconId: weatherDict?["icon"]?.string)
             
