@@ -17,6 +17,9 @@ private enum LastSearchType {
 class ServerManager {
     // MARK: - PROPERTIES
     private let baseUrl = "https://api.openweathermap.org/data/2.5"
+    private let weatherUrlComponent = "/weather?"
+    private let forecastUrlComponent = "/forecast/daily?"
+
     private let apiKey = "294c2bdc1cec983192f139eaf975b49a"
     private var lastSearchedWeatherLocation: CLLocation?
     private var lastSearchedCity: String?
@@ -31,8 +34,11 @@ class ServerManager {
                                      completion: @escaping (CurrentWeather) -> Void) {
         self.lastSearchedWeatherLocation = location
         self.lastSearchType = .byCoords
-        let currentWeatherUrl = "\(self.baseUrl)/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
-        let urlRequest = URLRequest(url: URL(string: currentWeatherUrl)!)
+        var currentWeatherUrlString = "\(self.baseUrl)"
+        currentWeatherUrlString += weatherUrlComponent
+        currentWeatherUrlString += "lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
+
+        let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
         self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
     }
     
@@ -40,8 +46,12 @@ class ServerManager {
                                      completion: @escaping (CurrentWeather) -> Void) {
         self.lastSearchedCity = locationName
         self.lastSearchType = .byCityName
-        let currentWeatherUrl = "\(self.baseUrl)/weather?q=\(locationName)&appid=\(self.apiKey)&units=metric"
-        let urlRequest = URLRequest(url: URL(string: currentWeatherUrl)!)
+        
+        var currentWeatherUrlString = "\(self.baseUrl)"
+        currentWeatherUrlString += weatherUrlComponent
+        currentWeatherUrlString += "q=\(locationName)&appid=\(self.apiKey)&units=metric"
+        
+        let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
         self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
     }
     
@@ -56,14 +66,20 @@ class ServerManager {
     
     public func getForecastFor(location: CLLocation,
                                completion: @escaping ([ForecastItem]) -> Void) {
-        let forecastUrlString = "\(self.baseUrl)/forecast/daily?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
+        var forecastUrlString = "\(self.baseUrl)"
+        forecastUrlString += self.forecastUrlComponent
+        forecastUrlString += "lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
+        
         let urlRequest = URLRequest(url: URL(string: forecastUrlString)!)
         self.getForecastWithURLRequest(urlRequest, completion: completion)
     }
     
     public func getForecastFor(city: String,
                                completion: @escaping ([ForecastItem]) -> Void) {
-        let forecastUrlString = "\(self.baseUrl)/forecast/daily?q=\(city)&appid=\(self.apiKey)&units=metric"
+        var forecastUrlString = "\(self.baseUrl)"
+        forecastUrlString += self.forecastUrlComponent
+        forecastUrlString += "q=\(city)&appid=\(self.apiKey)&units=metric"
+        
         let urlRequest = URLRequest(url: URL(string: forecastUrlString)!)
         self.getForecastWithURLRequest(urlRequest, completion: completion)
     }
