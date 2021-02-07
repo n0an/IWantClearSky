@@ -37,8 +37,10 @@ class ForecastViewController: UIViewController {
     
     func getForecastItemsFromServer() {
         ServerManager.shared.getForecastForLastSearched { forecastItems in
-            self.forecastItems = forecastItems
-            self.tableView.reloadData()
+            DispatchQueue.main.async {
+                self.forecastItems = forecastItems
+                self.tableView.reloadData()
+            }
         }
     }
 }

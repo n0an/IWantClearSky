@@ -19,7 +19,7 @@ class ServerManager {
     private let baseUrl = "https://api.openweathermap.org/data/2.5"
     private let weatherUrlComponent = "/weather?"
     private let forecastUrlComponent = "/forecast/daily?"
-
+    
     private let apiKey = "294c2bdc1cec983192f139eaf975b49a"
     private var lastSearchedWeatherLocation: CLLocation?
     private var lastSearchedCity: String?
@@ -37,7 +37,7 @@ class ServerManager {
         var currentWeatherUrlString = "\(self.baseUrl)"
         currentWeatherUrlString += weatherUrlComponent
         currentWeatherUrlString += "lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(self.apiKey)&units=metric"
-
+        
         let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
         self.getCurrentWeartherWithURLRequest(urlRequest, completion: completion)
     }
@@ -97,10 +97,9 @@ class ServerManager {
                 return
             }
             guard let data = data else { return }
-            DispatchQueue.main.async {
-                try? data.write(to: self.getDocumentsDirectory().appendingPathComponent(iconId))
-                completion(data)
-            }
+            try? data.write(to: self.getDocumentsDirectory().appendingPathComponent(iconId))
+            completion(data)
+            
         }.resume()
     }
     
@@ -118,34 +117,34 @@ class ServerManager {
     
     private func parseCurrentWeatherJSONData(_ data: Data?,
                                              completion: @escaping (CurrentWeather) -> Void) {
-        DispatchQueue.main.async {
-            guard let data = data,
-                  let json = try? JSON(data: data) else { return }
-            
-            let responseCode = json["cod"].intValue
-            
-            if responseCode == 404 {
-                print("city not found")
-                return
-            }
-            
-            let weatherDict = json["weather"].array?.first?.dictionaryValue
-            let date = json["dt"].doubleValue
-            let sunrise = json["sys"]["sunrise"].doubleValue
-            let sunset = json["sys"]["sunset"].doubleValue
-            
-            let isNight = sunrise > date || date > sunset
-            
-            let currentWeather = CurrentWeather(cityName: json["name"].string,
-                                                currentTemp: json["main"]["temp"].doubleValue,
-                                                description: weatherDict?["description"]?.string,
-                                                iconId: weatherDict?["icon"]?.string,
-                                                code: (weatherDict?["id"]!.intValue)!,
-                                                isNight: isNight)
-            
-            currentWeather.saveToCache()
-            completion(currentWeather)
+        
+        guard let data = data,
+              let json = try? JSON(data: data) else { return }
+        
+        let responseCode = json["cod"].intValue
+        
+        if responseCode == 404 {
+            print("city not found")
+            return
         }
+        
+        let weatherDict = json["weather"].array?.first?.dictionaryValue
+        let date = json["dt"].doubleValue
+        let sunrise = json["sys"]["sunrise"].doubleValue
+        let sunset = json["sys"]["sunset"].doubleValue
+        
+        let isNight = sunrise > date || date > sunset
+        
+        let currentWeather = CurrentWeather(cityName: json["name"].string,
+                                            currentTemp: json["main"]["temp"].doubleValue,
+                                            description: weatherDict?["description"]?.string,
+                                            iconId: weatherDict?["icon"]?.string,
+                                            code: (weatherDict?["id"]!.intValue)!,
+                                            isNight: isNight)
+        
+        currentWeather.saveToCache()
+        completion(currentWeather)
+        
     }
     
     private func getForecastWithURLRequest(_ urlRequest: URLRequest,
@@ -160,25 +159,25 @@ class ServerManager {
     }
     
     private func parseForecastJSONData(_ data: Data?,
-                                             completion: @escaping ([ForecastItem]) -> Void) {
-        DispatchQueue.main.async {
-            guard let data = data,
-                  let json = try? JSON(data: data),
-                  let jsonForecastItemsList = json["list"].array else { return }
-            var forecastItems = [ForecastItem]()
-            for jsonForecastItem in jsonForecastItemsList {
-                let weatherDict = jsonForecastItem["weather"].array?.first?.dictionary
-                let forecastItem = ForecastItem(weatherDescription: weatherDict?["description"]?.string,
-                                                maxTemp: jsonForecastItem["temp"]["max"].doubleValue,
-                                                minTemp: jsonForecastItem["temp"]["min"].doubleValue,
-                                                date: Date(timeIntervalSince1970: jsonForecastItem["dt"].doubleValue),
-                                                iconId: weatherDict?["icon"]?.string)
-                
-                forecastItems.append(forecastItem)
-            }
-            ForecastItem.saveForecastToCache(forecastItems: forecastItems)
-            completion(forecastItems)
+                                       completion: @escaping ([ForecastItem]) -> Void) {
+        
+        guard let data = data,
+              let json = try? JSON(data: data),
+              let jsonForecastItemsList = json["list"].array else { return }
+        var forecastItems = [ForecastItem]()
+        for jsonForecastItem in jsonForecastItemsList {
+            let weatherDict = jsonForecastItem["weather"].array?.first?.dictionary
+            let forecastItem = ForecastItem(weatherDescription: weatherDict?["description"]?.string,
+                                            maxTemp: jsonForecastItem["temp"]["max"].doubleValue,
+                                            minTemp: jsonForecastItem["temp"]["min"].doubleValue,
+                                            date: Date(timeIntervalSince1970: jsonForecastItem["dt"].doubleValue),
+                                            iconId: weatherDict?["icon"]?.string)
+            
+            forecastItems.append(forecastItem)
         }
+        ForecastItem.saveForecastToCache(forecastItems: forecastItems)
+        completion(forecastItems)
+        
     }
     
     private func getDocumentsDirectory() -> URL {

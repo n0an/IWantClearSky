@@ -30,7 +30,9 @@ class ForecastCell: UITableViewCell {
         }
         if let iconId = forecastItem.iconId {
             ServerManager.shared.fetchWeatherIconFor(iconId: iconId) { data in
-                self.weatherImageView.image = UIImage(data: data)
+                DispatchQueue.main.async {                
+                    self.weatherImageView.image = UIImage(data: data)
+                }
             }
         }
     }

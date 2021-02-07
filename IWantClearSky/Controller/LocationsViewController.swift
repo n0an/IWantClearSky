@@ -45,9 +45,11 @@ class LocationsViewController: UIViewController {
     func getWeatherForEnteredCity(_ city: String) {
         let city = city.split(separator: " ").joined(separator: "%20")
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
-            self?.locations.append(currentWeather.cityName ?? city)
-            self?.saveCities()
-            self?.tableView.reloadData()
+            DispatchQueue.main.async {
+                self?.locations.append(currentWeather.cityName ?? city)
+                self?.saveCities()
+                self?.tableView.reloadData()
+            }
         }
     }
     
@@ -103,7 +105,6 @@ extension LocationsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var selectedCity = self.locations[indexPath.row]
-//        ServerManager.shared.lastSearchedCity = selectedCity
         selectedCity = selectedCity.split(separator: " ").joined(separator: "%20")
         self.delegate?.didSelect(city: selectedCity)
         self.dismiss(animated: true, completion: nil)

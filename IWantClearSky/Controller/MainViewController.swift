@@ -78,7 +78,9 @@ class MainViewController: UIViewController {
     
     func getCurrentWeatherFor(city: String) {
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
-            self?.updateUIWithCurrentWeather(currentWeather)
+            DispatchQueue.main.async {
+                self?.updateUIWithCurrentWeather(currentWeather)
+            }
         }
     }
     
@@ -140,7 +142,9 @@ extension MainViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
-            self?.updateUIWithCurrentWeather(currentWeather)
+            DispatchQueue.main.async {
+                self?.updateUIWithCurrentWeather(currentWeather)
+            }
         }
     }
     
