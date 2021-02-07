@@ -19,6 +19,8 @@ class ForecastViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.forecastItems = []
+        self.tableView.reloadData()
         self.getForecastItemsFromCache()
         self.getForecastItemsFromServer()
     }

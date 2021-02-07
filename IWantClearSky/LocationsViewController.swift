@@ -45,7 +45,7 @@ class LocationsViewController: UIViewController {
     func getWeatherForEnteredCity(_ city: String) {
         let city = city.split(separator: " ").joined(separator: "%20")
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
-            self?.locations.append(city)
+            self?.locations.append(currentWeather.cityName ?? city)
             self?.saveCities()
             self?.tableView.reloadData()
         }
