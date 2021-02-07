@@ -14,7 +14,7 @@ class ForecastViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView.allowsSelection = false
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -175,6 +175,14 @@ class ServerManager {
                     
                     forecastItems.append(forecastItem)
                 }
+                
+                do {
+                    let data = try JSONEncoder().encode(forecastItems)
+                    UserDefaults.standard.set(data, forKey: savedForecast)
+                } catch {
+                    print(error)
+                }
+                
                 completion(forecastItems)
             }
         }.resume()

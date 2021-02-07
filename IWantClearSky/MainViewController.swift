@@ -206,38 +206,6 @@ extension MainViewController: CLLocationManagerDelegate {
     }
 }
 
-
-// MARK: - GeoLocationManagerDelegate
-extension MainViewController: GeoLocationManagerDelegate {
-    func didUpdateLocation(location: CLLocation) {
-        self.currentLocation = location
-//        55,755786
-//        37,617633
-        ServerManager.shared.getCurrentWeatherFor(location: location) { currentWeather in
-            
-            self.locationLabel.text = currentWeather.cityName ?? "--"
-            self.temperatureLabel.text = currentWeather.prepareTemperatureStr(temp: currentWeather.currentTemp)
-            self.weatherDescriptionLabel.text = currentWeather.description?.capitalized
-            
-            var hint = ""
-            if currentWeather.currentTemp < 0 {
-                hint = "It's frosty outside. Wear more clothes"
-            } else if 0...15 ~= currentWeather.currentTemp  {
-                hint = "It's quite cold"
-            } else {
-                hint = "Pretty warm outside"
-            }
-            self.hintLabel.text = hint
-            
-            if let iconId = currentWeather.iconId {
-                ServerManager.shared.fetchWeatherIconFor(iconId: iconId) { data in
-                    self.currentWeatherImageView.image = UIImage(data: data)
-                }
-            }
-        }
-    }
-}
-
 extension MainViewController: LocationsViewControllerDelegate {
     func didSelect(city: String) {
         self.getCurrentWeatherFor(city: city)
