@@ -53,7 +53,7 @@ class ServerManager {
         
         var currentWeatherUrlString = "\(self.baseUrl)"
         currentWeatherUrlString += weatherUrlComponent
-        currentWeatherUrlString += "q=\(locationName)&appid=\(self.apiKey)&units=metric"
+        currentWeatherUrlString += "q=\(self.prepareNameToRequest(for: locationName))&appid=\(self.apiKey)&units=metric"
         
         let urlRequest = URLRequest(url: URL(string: currentWeatherUrlString)!)
         self.getCurrentWeartherWithURLRequest(urlRequest,
@@ -63,7 +63,8 @@ class ServerManager {
     
     // MARK: - Forecast Methods
     public func getForecastForLastSearched(completion: @escaping ([ForecastItem]) -> Void) {
-        if self.lastSearchType == .byCoords, let location = self.lastSearchedWeatherLocation {
+        if self.lastSearchType == .byCoords,
+           let location = self.lastSearchedWeatherLocation {
             self.getForecastFor(location: location, completion: completion)
         } else if let lastSearchedCity = self.lastSearchedCity {
             self.getForecastFor(city: lastSearchedCity, completion: completion)
@@ -84,7 +85,7 @@ class ServerManager {
                                completion: @escaping ([ForecastItem]) -> Void) {
         var forecastUrlString = "\(self.baseUrl)"
         forecastUrlString += self.forecastUrlComponent
-        forecastUrlString += "q=\(city)&appid=\(self.apiKey)&units=metric"
+        forecastUrlString += "q=\(self.prepareNameToRequest(for: city))&appid=\(self.apiKey)&units=metric"
         
         let urlRequest = URLRequest(url: URL(string: forecastUrlString)!)
         self.getForecastWithURLRequest(urlRequest, completion: completion)
@@ -193,7 +194,12 @@ class ServerManager {
         }
         ForecastItem.saveForecastToCache(forecastItems: forecastItems)
         completion(forecastItems)
-        
+    }
+    
+    private func prepareNameToRequest(for cityName: String) -> String {
+        let removedSpaces = cityName.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "%20")
+        let removedDiacritics = removedSpaces.lowercased().folding(options: .diacriticInsensitive, locale: .current).replacingOccurrences(of: "ł", with: "l")
+        return removedDiacritics
     }
     
     private func getDocumentsDirectory() -> URL {
