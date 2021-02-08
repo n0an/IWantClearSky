@@ -22,9 +22,9 @@ class LocationManager: NSObject {
     // MARK: - INIT
     override init() {
         super.init()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        locationManager.requestWhenInUseAuthorization()
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        self.locationManager.requestWhenInUseAuthorization()
     }
     
     // MARK: - PUBLIC
@@ -40,7 +40,6 @@ class LocationManager: NSObject {
                 return
             }
         }
-        
         self.locationManager.startUpdatingLocation()
     }
 }
