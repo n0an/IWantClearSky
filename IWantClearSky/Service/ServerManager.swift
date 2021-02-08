@@ -158,7 +158,7 @@ class ServerManager {
         currentWeather.saveToCache()
         ForecastItem.invalidateForecastCache()
         if needNotify {
-            NotificationCenter.default.post(name: NSNotification.Name(notificationCurrentWeatherDidLoad),
+            NotificationCenter.default.post(name: NSNotification.Name(NotificationCurrentWeatherDidLoad),
                                             object: nil)
         }
         completion(currentWeather)

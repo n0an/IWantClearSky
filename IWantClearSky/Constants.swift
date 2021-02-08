@@ -8,12 +8,12 @@
 import Foundation
 
 // MARK: - UserDefaults Keys
-public let savedFavoriteLocationsArray = "savedFavoriteLocationsArray"
-public let savedCurrentWeather = "savedCurrentWeather"
-public let savedForecast = "savedForecast"
+public let SavedFavoriteLocationsArray = "savedFavoriteLocationsArray"
+public let SavedCurrentWeather = "savedCurrentWeather"
+public let SavedForecast = "savedForecast"
 
 // MARK: - Notifications Ids
-public let notificationCurrentWeatherDidLoad = "notificationCurrentWeatherDidLoad"
+public let NotificationCurrentWeatherDidLoad = "notificationCurrentWeatherDidLoad"
 
 // MARK: - LocationManager
 public let LocationAuthorizationStatus = "LocationAuthorizationStatus"

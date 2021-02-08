@@ -15,14 +15,14 @@ protocol LocationsViewControllerDelegate: AnyObject  {
 class LocationsViewController: UIViewController {
     // MARK: - STATIC METHODS
     public static func loadCitiesFromCache() -> [String] {
-        if let locationsArray = UserDefaults.standard.stringArray(forKey: savedFavoriteLocationsArray) {
+        if let locationsArray = UserDefaults.standard.stringArray(forKey: SavedFavoriteLocationsArray) {
             return locationsArray
         }
         return []
     }
     
     public static func saveCitiesToCache(cities: [String]) {
-        UserDefaults.standard.setValue(cities, forKey: savedFavoriteLocationsArray)
+        UserDefaults.standard.setValue(cities, forKey: SavedFavoriteLocationsArray)
     }
     
     // MARK: - OUTLETS
@@ -35,6 +35,7 @@ class LocationsViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.tableFooterView = UIView()
         self.loadCitiesFromCache()
     }
     
@@ -113,7 +114,7 @@ extension LocationsViewController: UITableViewDataSource {
 extension LocationsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        var selectedCity = self.locations[indexPath.row]
+        let selectedCity = self.locations[indexPath.row]
         self.delegate?.didSelect(city: selectedCity)
         self.dismiss(animated: true, completion: nil)
     }

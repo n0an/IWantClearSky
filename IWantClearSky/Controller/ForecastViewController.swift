@@ -18,9 +18,10 @@ class ForecastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.allowsSelection = false
+        tableView.tableFooterView = UIView()
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(self.currentWeatherUpdated),
-                                               name: NSNotification.Name(notificationCurrentWeatherDidLoad),
+                                               name: NSNotification.Name(NotificationCurrentWeatherDidLoad),
                                                object: nil)
     }
     

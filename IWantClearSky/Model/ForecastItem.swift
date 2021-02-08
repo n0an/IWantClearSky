@@ -17,7 +17,7 @@ struct ForecastItem: WeatherItem {
     
     // MARK: - CACHE
     public static func loadForecastFromCache() -> [Self] {
-        guard let data = UserDefaults.standard.object(forKey: savedForecast) as? Data else {
+        guard let data = UserDefaults.standard.object(forKey: SavedForecast) as? Data else {
             return []
         }
         if let forecastItems = try? JSONDecoder().decode([ForecastItem].self, from: data) {
@@ -29,13 +29,13 @@ struct ForecastItem: WeatherItem {
     public static func saveForecastToCache(forecastItems: [Self]) {
         do {
             let data = try JSONEncoder().encode(forecastItems)
-            UserDefaults.standard.set(data, forKey: savedForecast)
+            UserDefaults.standard.set(data, forKey: SavedForecast)
         } catch {
             print(error)
         }
     }
     
     public static func invalidateForecastCache() {
-        UserDefaults.standard.removeObject(forKey: savedForecast)
+        UserDefaults.standard.removeObject(forKey: SavedForecast)
     }
 }

@@ -18,7 +18,7 @@ struct CurrentWeather: WeatherItem {
     
     // MARK: - CACHE
     public static func loadFromCache() -> CurrentWeather? {
-        guard let data = UserDefaults.standard.object(forKey: savedCurrentWeather) as? Data else {
+        guard let data = UserDefaults.standard.object(forKey: SavedCurrentWeather) as? Data else {
             return nil
         }
         return try? JSONDecoder().decode(CurrentWeather.self, from: data)
@@ -27,7 +27,7 @@ struct CurrentWeather: WeatherItem {
     public func saveToCache() {
         do {
             let data = try JSONEncoder().encode(self)
-            UserDefaults.standard.set(data, forKey: savedCurrentWeather)
+            UserDefaults.standard.set(data, forKey: SavedCurrentWeather)
         } catch {
             print(error)
         }
