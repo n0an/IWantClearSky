@@ -24,6 +24,7 @@
 		3A8A615025CF17CF005B89CA /* LocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A614F25CF17CF005B89CA /* LocationsViewController.swift */; };
 		3A8A615225CF1AE0005B89CA /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A615125CF1AE0005B89CA /* LocationCell.swift */; };
 		3A8A615625CF2D6F005B89CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A615525CF2D6F005B89CA /* Constants.swift */; };
+		3A9F21AE25D0FB510002D770 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9F21AD25D0FB510002D770 /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		3A8A614F25CF17CF005B89CA /* LocationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsViewController.swift; sourceTree = "<group>"; };
 		3A8A615125CF1AE0005B89CA /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
 		3A8A615525CF2D6F005B89CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		3A9F21AD25D0FB510002D770 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				3A8A614025CEAFA8005B89CA /* ServerManager.swift */,
+				3A9F21AD25D0FB510002D770 /* LocationManager.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				3A6D6DAB25D006ED0093E8E2 /* FancyTabBar.swift in Sources */,
 				3A6D6DAE25D03AB40093E8E2 /* WeatherItem.swift in Sources */,
 				3A8A613125CDD87A005B89CA /* MainViewController.swift in Sources */,
+				3A9F21AE25D0FB510002D770 /* LocationManager.swift in Sources */,
 				3A8A612D25CDD87A005B89CA /* AppDelegate.swift in Sources */,
 				3A8A612F25CDD87A005B89CA /* SceneDelegate.swift in Sources */,
 				3A8A615625CF2D6F005B89CA /* Constants.swift in Sources */,

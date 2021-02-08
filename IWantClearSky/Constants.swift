@@ -14,3 +14,7 @@ public let savedForecast = "savedForecast"
 
 // MARK: - Notifications Ids
 public let notificationCurrentWeatherDidLoad = "notificationCurrentWeatherDidLoad"
+
+// MARK: - LocationManager
+public let LocationAuthorizationStatus = "LocationAuthorizationStatus"
+
