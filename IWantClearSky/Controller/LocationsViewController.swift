@@ -14,11 +14,11 @@ protocol LocationsViewControllerDelegate: AnyObject  {
 
 class LocationsViewController: UIViewController {
     // MARK: - STATIC METHODS
-    public static func loadCitiesFromCache() -> [String]? {
+    public static func loadCitiesFromCache() -> [String] {
         if let locationsArray = UserDefaults.standard.stringArray(forKey: savedFavoriteLocationsArray) {
             return locationsArray
         }
-        return nil
+        return []
     }
     
     public static func saveCitiesToCache(cities: [String]) {
@@ -40,10 +40,10 @@ class LocationsViewController: UIViewController {
     
     // MARK: - PRIVATE
     private func loadCitiesFromCache() {
-        if let locationsArray = Self.loadCitiesFromCache() {
-            self.locations = locationsArray
-            self.tableView.reloadData()
-        }
+        let locationsArray = Self.loadCitiesFromCache()
+        self.locations = locationsArray
+        self.tableView.reloadData()
+        
     }
     
     private func saveCitiesToCache() {

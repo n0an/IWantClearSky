@@ -64,10 +64,9 @@ class MainViewController: UIViewController {
     public func presentSearchAndGetCurrentWeather() {
         self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
             self.getCurrentWeatherFor(city: city)
-            if var citiesArray = LocationsViewController.loadCitiesFromCache() {
-                citiesArray.append(city)
-                LocationsViewController.saveCitiesToCache(cities: citiesArray)
-            }
+            var citiesArray = LocationsViewController.loadCitiesFromCache()
+            citiesArray.append(city)
+            LocationsViewController.saveCitiesToCache(cities: citiesArray)
         }
     }
     
