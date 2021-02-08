@@ -8,7 +8,6 @@
 import UIKit
 
 class FancyTabBar: UITabBar {
-    
     private var middleButton = UIButton()
     
     override func awakeFromNib() {

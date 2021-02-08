@@ -42,12 +42,13 @@ class MainViewController: UIViewController, Alertable {
     
     // MARK: - PUBLIC
     public func presentSearchAndGetCurrentWeather() {
-        
         self.presentSearchCityAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
             self.getCurrentWeatherFor(city: city)
             var citiesArray = LocationsViewController.loadCitiesFromCache()
-            citiesArray.append(city)
-            LocationsViewController.saveCitiesToCache(cities: citiesArray)
+            if citiesArray.contains(city) == false {
+                citiesArray.append(city)
+                LocationsViewController.saveCitiesToCache(cities: citiesArray)
+            }
         }
     }
     
@@ -144,33 +145,6 @@ class MainViewController: UIViewController, Alertable {
         }
     }
     
-//    private func presentSearchCityAlertController(withTitle title: String?,
-//                                                  message: String?,
-//                                                  style: UIAlertController.Style,
-//                                                  completion: @escaping (String) -> Void) {
-//        let ac = UIAlertController(title: title,
-//                                   message: message,
-//                                   preferredStyle: style)
-//        ac.addTextField { tf in
-//            let cities = ["Moscow",
-//                          "London",
-//                          "Amsterdam",
-//                          "New York",
-//                          "San Francisco",
-//                          "Mumbai"]
-//            tf.placeholder = cities.randomElement()
-//        }
-//        let search = UIAlertAction(title: "Search", style: .default) { action in
-//            let textField = ac.textFields?.first
-//            guard let cityName = textField?.text else { return }
-//            completion(cityName)
-//        }
-//        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-//        ac.addAction(search)
-//        ac.addAction(cancel)
-//        present(ac, animated: true, completion: nil)
-//    }
-    
     // MARK: - ACTIONS
     @IBAction func actionLocationsButtonTapped(_ sender: Any) {
         let listVc = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "LocationsViewController") as! LocationsViewController
@@ -187,18 +161,10 @@ class MainViewController: UIViewController, Alertable {
 
 // MARK: - LocationManagerDelegate
 extension MainViewController: LocationManagerDelegate {
-    func didFailWithError(error: Error) {
-        let ac = UIAlertController(title: "Location Services Error", message: error.localizedDescription, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        ac.addAction(okAction)
-        self.present(ac, animated: true, completion: nil)
-    }
-    
     func didGetErrorLocationServicesForbidden() {
-        let ac = UIAlertController(title: "Location Services Error", message: "To get actual weather for current location, please allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        ac.addAction(okAction)
-        self.present(ac, animated: true, completion: nil)
+        self.presentAlert(title: LocationServicesErrorTitle,
+                          message: LocationServicesErrorMessage,
+                          actionTitle: "OK")
     }
     
     func didUpdateLocation(location: CLLocation) {

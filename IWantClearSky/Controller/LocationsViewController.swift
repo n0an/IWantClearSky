@@ -15,10 +15,7 @@ protocol LocationsViewControllerDelegate: AnyObject  {
 class LocationsViewController: UIViewController, Alertable {
     // MARK: - STATIC METHODS
     public static func loadCitiesFromCache() -> [String] {
-        if let locationsArray = UserDefaults.standard.stringArray(forKey: SavedFavoriteLocationsArray) {
-            return locationsArray
-        }
-        return []
+        return UserDefaults.standard.stringArray(forKey: SavedFavoriteLocationsArray) ?? []
     }
     
     public static func saveCitiesToCache(cities: [String]) {
@@ -44,7 +41,6 @@ class LocationsViewController: UIViewController, Alertable {
         let locationsArray = Self.loadCitiesFromCache()
         self.locations = locationsArray
         self.tableView.reloadData()
-        
     }
     
     private func saveCitiesToCache() {
@@ -54,13 +50,18 @@ class LocationsViewController: UIViewController, Alertable {
     private func getWeatherForEnteredCity(_ city: String) {
         ServerManager.shared.getCurrentWeatherFor(locationName: city) { [weak self] currentWeather in
             DispatchQueue.main.async {
-                self?.locations.append(currentWeather.cityName ?? city)
-                self?.saveCitiesToCache()
-                self?.tableView.reloadData()
+                guard let self = self else { return }
+                if self.locations.contains(city) == false {
+                    self.locations.append(currentWeather.cityName ?? city)
+                    self.saveCitiesToCache()
+                    self.tableView.beginUpdates()
+                    self.tableView.insertRows(at: [IndexPath(row: self.locations.count - 1, section: 0)], with: .automatic)
+                    self.tableView.endUpdates()
+                }
             }
         }
     }
-   
+    
     // MARK: - ACTIONS
     @IBAction func actionSearchButtonTapped(_ sender: Any) {
         self.presentSearchCityAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in

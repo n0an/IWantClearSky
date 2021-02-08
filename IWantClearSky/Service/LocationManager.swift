@@ -12,7 +12,6 @@ import CoreLocation
 public protocol LocationManagerDelegate: AnyObject {
     func didUpdateLocation(location: CLLocation)
     func didGetErrorLocationServicesForbidden()
-    func didFailWithError(error: Error)
 }
 
 class LocationManager: NSObject {
@@ -30,6 +29,18 @@ class LocationManager: NSObject {
     
     // MARK: - PUBLIC
     func requestLocationUpdate() {
+        if #available(iOS 14.0, *) {
+            if self.locationManager.authorizationStatus == .denied {
+                self.delegate?.didGetErrorLocationServicesForbidden()
+                return
+            }
+        } else {
+            if CLLocationManager.authorizationStatus() == .denied {
+                self.delegate?.didGetErrorLocationServicesForbidden()
+                return
+            }
+        }
+        
         self.locationManager.startUpdatingLocation()
     }
 }
@@ -55,9 +66,5 @@ extension LocationManager: CLLocationManagerDelegate {
         guard let last = locations.last else { return }
         self.delegate?.didUpdateLocation(location: last)
         self.locationManager.stopUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.delegate?.didFailWithError(error: error)
     }
 }

@@ -10,6 +10,15 @@ import UIKit
 protocol Alertable {}
 
 extension Alertable where Self: UIViewController {
+    func presentAlert(title: String, message: String, actionTitle: String) {
+        let ac = UIAlertController(title: title,
+                                   message: message,
+                                   preferredStyle:. alert)
+        let okAction = UIAlertAction(title: actionTitle, style: .default, handler: nil)
+        ac.addAction(okAction)
+        self.present(ac, animated: true, completion: nil)
+    }
+    
     func presentSearchCityAlertController(withTitle title: String?,
                                           message: String?,
                                           style: UIAlertController.Style,
@@ -34,6 +43,6 @@ extension Alertable where Self: UIViewController {
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         ac.addAction(search)
         ac.addAction(cancel)
-        present(ac, animated: true, completion: nil)
+        self.present(ac, animated: true, completion: nil)
     }
 }
