@@ -23,14 +23,6 @@ class MainViewController: UIViewController {
     private var forcedStatusBarStyle: UIStatusBarStyle = .default
     var locationManager: LocationManager!
     
-//    private lazy var locationManager: CLLocationManager = {
-//        let lm = CLLocationManager()
-//        lm.delegate = self
-//        lm.desiredAccuracy = kCLLocationAccuracyHundredMeters
-//        lm.requestWhenInUseAuthorization()
-//        return lm
-//    }()
-    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return forcedStatusBarStyle
     }
@@ -45,10 +37,6 @@ class MainViewController: UIViewController {
         
         self.locationManager = LocationManager()
         self.locationManager.delegate = self
-        
-//        if CLLocationManager.locationServicesEnabled() {
-//            locationManager.requestLocation()
-//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -197,7 +185,7 @@ extension MainViewController: LocationManagerDelegate {
     }
     
     func didGetErrorLocationServicesForbidden() {
-        let ac = UIAlertController(title: "Location Services Error", message: "Please, to get actual weather for current location, allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
+        let ac = UIAlertController(title: "Location Services Error", message: "To get actual weather for current location, please allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         ac.addAction(okAction)
@@ -206,27 +194,6 @@ extension MainViewController: LocationManagerDelegate {
     
     func didUpdateLocation(location: CLLocation) {
         self.getWeatherForLocation(location)
-    }
-}
-
-// MARK: - CLLocationManagerDelegate
-extension MainViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
-            DispatchQueue.main.async {
-                self?.updateUIWithCurrentWeather(currentWeather)
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        let ac = UIAlertController(title: "Location Services Error", message: "Please, to get actual weather for current location, allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        ac.addAction(okAction)
-        self.present(ac, animated: true, completion: nil)
-        print(error.localizedDescription)
     }
 }
 
