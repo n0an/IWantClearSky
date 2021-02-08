@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="9R0-p7-Aav">
-                                <rect key="frame" x="182" y="372" width="50" height="66"/>
+                                <rect key="frame" x="182" y="395.5" width="50" height="66"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nBV-P5-09L">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -41,10 +41,10 @@
                                 </subviews>
                             </stackView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="im4-3X-XB3">
-                                <rect key="frame" x="132" y="159" width="150" height="150"/>
+                                <rect key="frame" x="167" y="138" width="80" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="iXP-cF-xoj"/>
-                                    <constraint firstAttribute="height" constant="150" id="xEo-C1-bws"/>
+                                    <constraint firstAttribute="width" constant="80" id="iXP-cF-xoj"/>
+                                    <constraint firstAttribute="height" constant="80" id="xEo-C1-bws"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uQn-4f-IM0">
@@ -74,15 +74,15 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="hEl-L9-c6m" secondAttribute="trailing" constant="20" id="1Jo-HB-i8m"/>
-                            <constraint firstItem="im4-3X-XB3" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="115" id="1bl-QV-1Dw"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uQn-4f-IM0" secondAttribute="trailing" constant="20" id="75m-UZ-IHl"/>
                             <constraint firstItem="uQn-4f-IM0" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="54" id="Cxj-Qf-xO8"/>
                             <constraint firstItem="9R0-p7-Aav" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="IX9-3a-OCD"/>
-                            <constraint firstItem="9R0-p7-Aav" firstAttribute="top" secondItem="im4-3X-XB3" secondAttribute="bottom" constant="63" id="WRU-lE-Vun"/>
+                            <constraint firstItem="im4-3X-XB3" firstAttribute="top" secondItem="uQn-4f-IM0" secondAttribute="bottom" constant="40" id="Kxe-fo-gJo"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="hEl-L9-c6m" secondAttribute="bottom" constant="20" id="aQo-0c-Q1u"/>
                             <constraint firstItem="CUs-8t-PAA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="duv-6W-stD"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="CUs-8t-PAA" secondAttribute="bottom" constant="20" id="fAV-LR-PcA"/>
                             <constraint firstItem="uQn-4f-IM0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="i2V-0b-o9c"/>
+                            <constraint firstItem="9R0-p7-Aav" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="mqi-wC-bXf"/>
                             <constraint firstItem="im4-3X-XB3" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="uNc-Qx-PLz"/>
                         </constraints>
                     </view>
