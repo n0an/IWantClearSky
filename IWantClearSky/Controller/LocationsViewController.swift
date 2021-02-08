@@ -12,7 +12,7 @@ protocol LocationsViewControllerDelegate: AnyObject  {
     func didSelect(city: String)
 }
 
-class LocationsViewController: UIViewController {
+class LocationsViewController: UIViewController, Alertable {
     // MARK: - STATIC METHODS
     public static func loadCitiesFromCache() -> [String] {
         if let locationsArray = UserDefaults.standard.stringArray(forKey: SavedFavoriteLocationsArray) {
@@ -60,34 +60,10 @@ class LocationsViewController: UIViewController {
             }
         }
     }
-    
-    private func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
-        let ac = UIAlertController(title: title, message: message, preferredStyle: style)
-        ac.addTextField { tf in
-            let cities = ["Moscow",
-                          "London",
-                          "Amsterdam",
-                          "New York",
-                          "San Francisco",
-                          "Mumbai"]
-            tf.placeholder = cities.randomElement()
-        }
-        let search = UIAlertAction(title: "Search", style: .default) { action in
-            let textField = ac.textFields?.first
-            guard let cityName = textField?.text else { return }
-            completion(cityName)
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        ac.addAction(search)
-        ac.addAction(cancel)
-        present(ac, animated: true, completion: nil)
-    }
-    
-    
+   
     // MARK: - ACTIONS
     @IBAction func actionSearchButtonTapped(_ sender: Any) {
-        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in
+        self.presentSearchCityAlertController(withTitle: "Enter city", message: nil, style: .alert) { [weak self] city in
             self?.getWeatherForEnteredCity(city)
         }
     }

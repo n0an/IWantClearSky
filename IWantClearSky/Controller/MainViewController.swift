@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, Alertable {
     // MARK: - OUTLETS
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -30,27 +30,20 @@ class MainViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.bgImageView = UIImageView()
-        self.view.insertSubview(self.bgImageView, at: 0)
-        
+        self.setupUI()
         self.getCurrentWeatherFromCache()
-        
-        self.locationManager = LocationManager()
-        self.locationManager.delegate = self
+        self.setupLocationManager()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.bgImageView.translatesAutoresizingMaskIntoConstraints = false
-        [self.bgImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
-         self.bgImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-         self.bgImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-         self.bgImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)].forEach {$0.isActive = true}
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.setupLayout()
     }
     
     // MARK: - PUBLIC
     public func presentSearchAndGetCurrentWeather() {
-        self.presentSearchAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
+        
+        self.presentSearchCityAlertController(withTitle: "Enter city", message: nil, style: .alert) { city in
             self.getCurrentWeatherFor(city: city)
             var citiesArray = LocationsViewController.loadCitiesFromCache()
             citiesArray.append(city)
@@ -59,9 +52,35 @@ class MainViewController: UIViewController {
     }
     
     // MARK: - PRIVATE
+    private func setupUI() {
+        self.bgImageView = UIImageView()
+        self.view.insertSubview(self.bgImageView, at: 0)
+    }
+    
+    private func setupLocationManager() {
+        self.locationManager = LocationManager()
+        self.locationManager.delegate = self
+    }
+    
+    private func setupLayout() {
+        self.bgImageView.translatesAutoresizingMaskIntoConstraints = false
+        [self.bgImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
+         self.bgImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+         self.bgImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+         self.bgImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)].forEach {$0.isActive = true}
+    }
+    
     private func getCurrentWeatherFromCache() {
         if let cachedCurrentWeather = CurrentWeather.loadFromCache() {
             self.updateUIWithCurrentWeather(cachedCurrentWeather)
+        }
+    }
+    
+    private func getCurrentWeatherFor(location: CLLocation) {
+        ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
+            DispatchQueue.main.async {
+                self?.updateUIWithCurrentWeather(currentWeather)
+            }
         }
     }
     
@@ -89,19 +108,18 @@ class MainViewController: UIViewController {
         }
         
         self.weatherDescriptionLabel.text = currentWeather.description?.capitalized
-        
-        let labelsColor = currentWeather.isNight ? UIColor.white : .black
+        let tintColor = currentWeather.isNight ? UIColor.white : .black
         
         self.forcedStatusBarStyle = currentWeather.isNight ? .lightContent : .darkContent
         self.setNeedsStatusBarAppearanceUpdate()
-
+        
         [self.locationLabel,
          self.temperatureLabel,
          self.weatherDescriptionLabel,
-         self.hintLabel].forEach {$0?.textColor = labelsColor}
+         self.hintLabel].forEach {$0?.textColor = tintColor}
         
         [self.locationsButton,
-         self.currentLocationButton].forEach {$0?.tintColor = currentWeather.isNight ? .white : .black}
+         self.currentLocationButton].forEach {$0?.tintColor = tintColor}
         
         if let weatherCode = currentWeather.code {
             var conditionStr = "clear"
@@ -126,27 +144,32 @@ class MainViewController: UIViewController {
         }
     }
     
-    private func presentSearchAlertController(withTitle title: String?, message: String?, style: UIAlertController.Style, completion: @escaping (String) -> Void) {
-        let ac = UIAlertController(title: title, message: message, preferredStyle: style)
-        ac.addTextField { tf in
-            let cities = ["Moscow",
-                          "London",
-                          "Amsterdam",
-                          "New York",
-                          "San Francisco",
-                          "Mumbai"]
-            tf.placeholder = cities.randomElement()
-        }
-        let search = UIAlertAction(title: "Search", style: .default) { action in
-            let textField = ac.textFields?.first
-            guard let cityName = textField?.text else { return }
-            completion(cityName)
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        ac.addAction(search)
-        ac.addAction(cancel)
-        present(ac, animated: true, completion: nil)
-    }
+//    private func presentSearchCityAlertController(withTitle title: String?,
+//                                                  message: String?,
+//                                                  style: UIAlertController.Style,
+//                                                  completion: @escaping (String) -> Void) {
+//        let ac = UIAlertController(title: title,
+//                                   message: message,
+//                                   preferredStyle: style)
+//        ac.addTextField { tf in
+//            let cities = ["Moscow",
+//                          "London",
+//                          "Amsterdam",
+//                          "New York",
+//                          "San Francisco",
+//                          "Mumbai"]
+//            tf.placeholder = cities.randomElement()
+//        }
+//        let search = UIAlertAction(title: "Search", style: .default) { action in
+//            let textField = ac.textFields?.first
+//            guard let cityName = textField?.text else { return }
+//            completion(cityName)
+//        }
+//        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        ac.addAction(search)
+//        ac.addAction(cancel)
+//        present(ac, animated: true, completion: nil)
+//    }
     
     // MARK: - ACTIONS
     @IBAction func actionLocationsButtonTapped(_ sender: Any) {
@@ -160,21 +183,12 @@ class MainViewController: UIViewController {
     @IBAction func actionCurrentLocationTapped(_ sender: Any) {
         self.locationManager.requestLocationUpdate()
     }
-    
-    func getWeatherForLocation(_ location: CLLocation) {
-        ServerManager.shared.getCurrentWeatherFor(location: location) { [weak self] currentWeather in
-            DispatchQueue.main.async {
-                self?.updateUIWithCurrentWeather(currentWeather)
-            }
-        }
-    }
 }
 
 // MARK: - LocationManagerDelegate
 extension MainViewController: LocationManagerDelegate {
     func didFailWithError(error: Error) {
         let ac = UIAlertController(title: "Location Services Error", message: error.localizedDescription, preferredStyle: .alert)
-        
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         ac.addAction(okAction)
         self.present(ac, animated: true, completion: nil)
@@ -182,14 +196,13 @@ extension MainViewController: LocationManagerDelegate {
     
     func didGetErrorLocationServicesForbidden() {
         let ac = UIAlertController(title: "Location Services Error", message: "To get actual weather for current location, please allow Location access for IWantClearSky app in the Settings -> Privacy -> Location Services", preferredStyle: .alert)
-        
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         ac.addAction(okAction)
         self.present(ac, animated: true, completion: nil)
     }
     
     func didUpdateLocation(location: CLLocation) {
-        self.getWeatherForLocation(location)
+        self.getCurrentWeatherFor(location: location)
     }
 }
 
