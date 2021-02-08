@@ -18,7 +18,6 @@ public protocol LocationManagerDelegate: AnyObject {
 class LocationManager: NSObject {
     // MARK: - PROPERTIES
     private let locationManager = CLLocationManager()
-    private var lastLocation: CLLocation?
     public weak var delegate: LocationManagerDelegate?
     
     // MARK: - INIT
@@ -30,8 +29,8 @@ class LocationManager: NSObject {
     }
     
     // MARK: - PUBLIC
-    func getLastLocation() -> CLLocation? {
-        return self.lastLocation
+    func requestLocationUpdate() {
+        self.locationManager.startUpdatingLocation()
     }
 }
 
@@ -48,14 +47,14 @@ extension LocationManager: CLLocationManagerDelegate {
             locationManager.stopUpdatingLocation()
         case .restricted:
             locationManager.stopUpdatingLocation()
-        @unknown default: assertionFailure("Location manager status is unknown!")
+        @unknown default: assertionFailure("Location manager status is unknown")
         }
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let last = locations.last else { return }
-        self.lastLocation = last
         self.delegate?.didUpdateLocation(location: last)
+        self.locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

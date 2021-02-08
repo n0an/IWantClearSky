@@ -174,9 +174,7 @@ class MainViewController: UIViewController {
     }
     
     @IBAction func actionCurrentLocationTapped(_ sender: Any) {
-        if let lastLocation = self.locationManager.getLastLocation() {
-            self.getWeatherForLocation(lastLocation)
-        }
+        self.locationManager.requestLocationUpdate()
     }
     
     func getWeatherForLocation(_ location: CLLocation) {
@@ -188,6 +186,7 @@ class MainViewController: UIViewController {
     }
 }
 
+// MARK: - LocationManagerDelegate
 extension MainViewController: LocationManagerDelegate {
     func didFailWithError(error: Error) {
         let ac = UIAlertController(title: "Location Services Error", message: error.localizedDescription, preferredStyle: .alert)

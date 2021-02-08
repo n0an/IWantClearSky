@@ -14,6 +14,11 @@ class ForecastCell: UITableViewCell {
     @IBOutlet weak var minTempLabel: UILabel!
     @IBOutlet weak var weatherImageView: UIImageView!
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.weatherImageView.image = nil
+    }
+    
     public func configureCell(with forecastItem: ForecastItem) {
         self.weatherDescriptionLabel.text = forecastItem.weatherDescription
         if let maxTemp = forecastItem.maxTemp {
